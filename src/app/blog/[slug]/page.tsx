@@ -9,13 +9,21 @@ import SwiperModal from '@/components/SwiperModal'; // 👈 Import SwiperModal
 
 type Props = { params: { slug: string } };
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const { slug } = params;
-  
-  // Fetch the post based on the slug
+interface Params {
+  slug: string;
+}
+
+export async function generateMetadata({ params }: { params: Promise<Params> }) {
+  const { slug } = await params;
   const post = await getPostBySlug(slug);
-  
-  if (!post) return {};
+
+  if (!post) {
+    return {
+      title: 'Post Not Found',
+      description: 'The requested blog post could not be found.',
+      keywords: '',
+    };
+  }
 
   return {
     title: post.seo?.metaTitle || post.title,
@@ -23,6 +31,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     keywords: post.seo?.metaKeywords || '',
   };
 }
+
 
 
 export default async function BlogPage({ params }: Props) {
