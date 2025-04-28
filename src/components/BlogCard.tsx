@@ -4,50 +4,67 @@ export default function BlogCard({ post }: { post: any }) {
   const publishedDate = post.publishedAt
     ? new Date(post.publishedAt).toLocaleDateString("en-US", {
         year: "numeric",
-        month: "short",
+        month: "long",
         day: "numeric",
       })
     : "";
 
+  const stripMarkdown = (markdown: string) =>
+    markdown
+      .replace(/[*_~`>#+-]/g, "")
+      .replace(/\[(.*?)\]\(.*?\)/g, "$1")
+      .replace(/!\[.*?\]\(.*?\)/g, "")
+      .trim();
+
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className=" group block w-[230px] bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-700 rounded-xl overflow-hidden transition hover:shadow-md mx-auto"
+      className="group relative flex flex-col overflow-hidden rounded-3xl border border-neutral-200 dark:border-neutral-700 bg-white/70 dark:bg-neutral-900/70 shadow-xl hover:shadow-2xl transition-all duration-300 backdrop-blur-md w-full max-w-sm mx-auto"
     >
       {/* Thumbnail */}
       {post.imageUrl && (
-        <div className="aspect-[4/3.7] w-full overflow-hidden">
+        <div className="relative w-full aspect-video overflow-hidden">
           <img
             src={post.imageUrl}
             alt={post.title}
-            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
           />
+          <div className="absolute inset-0 bg-black/10 group-hover:bg-black/20 transition-all" />
         </div>
       )}
 
       {/* Content */}
-      <div className="p-3 space-y-1">
-        <h3 className="text-sm font-medium text-neutral-900 dark:text-white leading-snug line-clamp-2">
-          {post.title}
-        </h3>
+      <div className="flex flex-col gap-2 p-5">
+        {/* Tags */}
+        {post.tags?.length > 0 && (
+          <div className="flex flex-wrap gap-1">
+            {post.tags.map((tag: string, index: number) => (
+              <span
+                key={index}
+                className="bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-300 text-[10px] font-semibold px-2 py-1 rounded-full"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+        )}
 
-        <p className="text-xs text-neutral-600 dark:text-neutral-400 line-clamp-1">
+        {/* Title */}
+        <h2 className="text-lg md:text-xl font-bold text-neutral-900 dark:text-white line-clamp-2 transition-colors group-hover:text-primary-600">
+          {post.title}
+        </h2>
+
+        {/* Excerpt */}
+        <p className="text-sm text-neutral-700 dark:text-neutral-400 line-clamp-3">
           {stripMarkdown(post.excerpt || "")}
         </p>
 
-        {/* Date Footer */}
-        <div className="mt-2 text-[11px] text-neutral-500 dark:text-neutral-400">
-          📅 {publishedDate}
+        {/* Footer: Date & Read Time */}
+        <div className="flex justify-between items-center mt-4 text-xs text-neutral-500 dark:text-neutral-400">
+          <span>📅 {publishedDate}</span>
+          <span>⏱️ {Math.max(Math.ceil((post.content?.length || 400) / 800), 1)} min read</span>
         </div>
       </div>
     </Link>
   );
-}
-
-function stripMarkdown(markdown: string): string {
-  return markdown
-    .replace(/[*_~`>#+-]/g, "")
-    .replace(/\[(.*?)\]\(.*?\)/g, "$1")
-    .replace(/!\[.*?\]\(.*?\)/g, "")
-    .trim();
 }
