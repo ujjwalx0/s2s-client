@@ -14,11 +14,12 @@ interface Params {
 }
 
 interface Props {
-  params: Params;
+  params: Promise<Params>;
 }
 
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
+
   const post = await getPostBySlug(slug);
 
   if (!post) {
@@ -66,12 +67,10 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
 }
 
 export default async function BlogPage({ params }: Props) {
-  // Wait for the params to resolve
-  const { slug } = await params; // Await the params
+  const { slug } = await params;
 
   const post = await getPostBySlug(slug);
   if (!post) return notFound();
-
 
   const imageUrl = post.coverImage?.formats?.large?.url || post.coverImage?.url;
   const fullImageUrl = imageUrl?.startsWith('http') ? imageUrl : `${process.env.STRAPI_API_URL}${imageUrl}`;
@@ -91,7 +90,6 @@ export default async function BlogPage({ params }: Props) {
 
   const createdDate = formatDate(post.createdAt);
   const updatedDate = formatDate(post.updatedAt);
-
   const postUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slug}`;
 
   const images = [];
@@ -123,7 +121,6 @@ export default async function BlogPage({ params }: Props) {
 
   return (
     <main className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl max-w-5xl mx-auto my-10">
-      
       {/* Images */}
       {images.length > 1 ? (
         <SwiperModal images={images} />
