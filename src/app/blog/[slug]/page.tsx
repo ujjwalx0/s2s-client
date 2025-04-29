@@ -140,7 +140,8 @@ export default async function BlogPage({ params }: Props) {
       <div className="flex justify-between items-start flex-wrap gap-y-4 mb-6">
         <h1 className="text-4xl font-extrabold w-full md:w-auto text-black">{post.title}</h1>
         <div className="mt-4 sm:mt-6 md:mt-8 lg:mt-10">
-          <ShareAndCopyLinks postUrl={postUrl} />
+        <ShareAndCopyLinks slug={post.slug} />
+
         </div>
       </div>
 
