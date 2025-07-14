@@ -42,7 +42,7 @@ const BlogCard: FC<{ post: BlogPost }> = ({ post }) => {
           <img
             src={post.imageUrl}
             alt={post.title}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-fit"
             loading="lazy"
           />
         </div>

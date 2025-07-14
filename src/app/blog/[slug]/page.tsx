@@ -125,15 +125,16 @@ export default async function BlogPage({ params }: Props) {
       {images.length > 1 ? (
         <SwiperModal images={images} />
       ) : images.length === 1 ? (
-        <div className="w-full max-w-3xl mx-auto mb-7 overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-400 shadow-2xl">
-          <div className="relative aspect-[21/10] flex justify-center items-center">
-            <img
-              src={images[0].url}
-              alt={images[0].alt || ''}
-              className="object-contain w-full h-full transition-all duration-500 hover:scale-105"
-            />
-          </div>
+        <div className="w-full max-w-2xl mx-auto mb-7 overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-400 shadow-2xl">
+        <div className="relative aspect-[16/10] bg-black">
+          <img
+            src={images[0].url}
+            alt={images[0].alt || ''}
+            className="w-full h-full object-contain transition-all duration-500"
+          />
         </div>
+      </div>
+      
       ) : null}
 
       {/* Title and Share */}
