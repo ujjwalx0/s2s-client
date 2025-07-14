@@ -36,17 +36,17 @@ const BlogCard: FC<{ post: BlogPost }> = ({ post }) => {
       href={`/blog/${post.slug}`}
       className="w-full h-full flex flex-col overflow-hidden rounded-md border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-3 transition-all duration-200"
 >
-      {/* Thumbnail */}
-      {post.imageUrl && (
-        <div className="w-full h-[150px] sm:h-[180px] overflow-hidden rounded-md">
-          <img
-            src={post.imageUrl}
-            alt={post.title}
-            className="w-full h-full object-fit"
-            loading="lazy"
-          />
-        </div>
-      )}
+{post.imageUrl && (
+  <div className="w-full overflow-hidden rounded-md">
+    <img
+      src={post.imageUrl}
+      alt={post.title}
+      className="w-full h-auto object-contain"
+      loading="lazy"
+    />
+  </div>
+)}
+
 
       {/* Content */}
       <div className="mt-3">
