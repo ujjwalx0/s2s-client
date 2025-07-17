@@ -1,6 +1,6 @@
 // src/app/blog/[slug]/page.tsx
 
-import { getAllPosts, getPostBySlug } from '@/lib/api';
+import { getPostBySlug } from '@/lib/api';
 import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
@@ -20,23 +20,31 @@ interface Props {
 
 export async function generateMetadata({ params }: { params: Promise<Params> }) {
   const { slug } = await params;
-
   const post = await getPostBySlug(slug);
 
   if (!post) {
     return {
       title: 'Post Not Found',
       description: 'The requested blog post could not be found.',
-      keywords: '',
       openGraph: {
         title: 'Post Not Found',
         description: 'The requested blog post could not be found.',
         url: `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slug}`,
       },
+      twitter: {
+        card: 'summary',
+      },
     };
   }
 
-  const imageUrl = post.coverImage?.formats?.large?.url || post.coverImage?.url || '';
+  const imageUrl =
+    post.coverImage?.formats?.large?.url ||
+    post.coverImage?.url ||
+    '';
+
+  const fullImageUrl = imageUrl.startsWith('http')
+    ? imageUrl
+    : `${process.env.STRAPI_API_URL}${imageUrl}`;
 
   return {
     title: post.seo?.metaTitle || post.title,
@@ -47,7 +55,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
       description: post.seo?.metaDescription || '',
       images: [
         {
-          url: imageUrl.startsWith('http') ? imageUrl : `${process.env.STRAPI_API_URL}${imageUrl}`,
+          url: fullImageUrl,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -60,23 +68,28 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
       card: 'summary_large_image',
       title: post.seo?.metaTitle || post.title,
       description: post.seo?.metaDescription || '',
-      images: [
-        imageUrl.startsWith('http') ? imageUrl : `${process.env.STRAPI_API_URL}${imageUrl}`,
-      ],
+      images: [fullImageUrl],
     },
   };
 }
 
 export default async function BlogPage({ params }: Props) {
   const { slug } = await params;
-
   const post = await getPostBySlug(slug);
+
   if (!post) return notFound();
 
-  const imageUrl = post.coverImage?.formats?.large?.url || post.coverImage?.url;
-  const fullImageUrl = imageUrl?.startsWith('http') ? imageUrl : `${process.env.STRAPI_API_URL}${imageUrl}`;
+  // Prepare image URLs
+  const coverImageUrl =
+    post.coverImage?.formats?.large?.url ||
+    post.coverImage?.url ||
+    '';
+  const fullCoverImageUrl = coverImageUrl.startsWith('http')
+    ? coverImageUrl
+    : `${process.env.STRAPI_API_URL}${coverImageUrl}`;
 
-  const formatDate = (dateString: string | null | undefined) => {
+  // Format dates safely
+  const formatDate = (dateString?: string | null) => {
     if (!dateString) return 'Unknown Date';
     const date = new Date(dateString);
     if (isNaN(date.getTime())) return 'Unknown Date';
@@ -91,13 +104,13 @@ export default async function BlogPage({ params }: Props) {
 
   const createdDate = formatDate(post.createdAt);
   const updatedDate = formatDate(post.updatedAt);
-  const postUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slug}`;
 
+  // Aggregate images for slider or single display
   const images = [];
 
   if (post.coverImage?.url) {
     images.push({
-      url: fullImageUrl,
+      url: fullCoverImageUrl,
       alt: post.title,
     });
   }
@@ -105,12 +118,15 @@ export default async function BlogPage({ params }: Props) {
   if (Array.isArray(post.galleryImages)) {
     images.push(
       ...post.galleryImages.map((img: any) => ({
-        url: img.url.startsWith('http') ? img.url : `${process.env.STRAPI_API_URL}${img.url}`,
+        url: img.url.startsWith('http')
+          ? img.url
+          : `${process.env.STRAPI_API_URL}${img.url}`,
         alt: img.alternativeText || '',
       }))
     );
   }
 
+  // Reading time calculation
   const calculateReadingTime = (text: string) => {
     const words = text.trim().split(/\s+/).length;
     const wordsPerMinute = 200;
@@ -122,7 +138,7 @@ export default async function BlogPage({ params }: Props) {
 
   return (
     <main className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl max-w-5xl mx-auto my-10">
-      {/* Images */}
+      {/* Images Section */}
       {images.length > 1 ? (
         <SwiperModal images={images} />
       ) : images.length === 1 ? (
@@ -145,7 +161,7 @@ export default async function BlogPage({ params }: Props) {
         </div>
       </div>
 
-      {/* Dates */}
+      {/* Dates and Reading Time */}
       <div className="flex flex-col gap-2 mb-8">
         <p className="text-gray-500 text-sm">🛠️ Created: {createdDate}</p>
         {post.updatedAt !== post.createdAt && (
@@ -160,7 +176,7 @@ export default async function BlogPage({ params }: Props) {
 
       {/* Tags */}
       {post.seo?.metaKeywords && (
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-wrap gap-4 mb-8">
           {post.seo.metaKeywords.split(',').map((tag) => (
             <span
               key={tag.trim()}
@@ -217,12 +233,8 @@ export default async function BlogPage({ params }: Props) {
                 {children}
               </a>
             ),
-
-            // The important change is here, use Next.js Image and filter src:
             img: ({ src, alt }) => {
-              if (!src || typeof src !== 'string') {
-                return null; // skip if invalid src (like Blob)
-              }
+              if (!src || typeof src !== 'string') return null;
               return (
                 <div className="relative w-full max-w-3xl mx-auto my-8 h-[300px] sm:h-[400px] md:h-[450px]">
                   <Image
@@ -237,7 +249,6 @@ export default async function BlogPage({ params }: Props) {
                 </div>
               );
             },
-
             blockquote: ({ children }) => (
               <blockquote className="border-l-4 border-gray-400 dark:border-gray-500 bg-gray-50 dark:bg-gray-800/50 italic pl-6 py-4 my-6 rounded-md text-gray-700 dark:text-gray-300">
                 {children}
@@ -260,7 +271,9 @@ export default async function BlogPage({ params }: Props) {
             <iframe
               src={
                 post.youtubeUrl.includes('youtu.be/')
-                  ? `https://www.youtube.com/embed/${post.youtubeUrl.split('youtu.be/')[1]?.split('?')[0]}`
+                  ? `https://www.youtube.com/embed/${post.youtubeUrl
+                      .split('youtu.be/')[1]
+                      ?.split('?')[0]}`
                   : post.youtubeUrl
               }
               title={post.youtubeTitle || post.title}
