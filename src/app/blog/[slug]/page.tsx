@@ -1,5 +1,3 @@
-// src/app/blog/[slug]/page.tsx
-
 import { getPostBySlug } from '@/lib/api';
 import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
@@ -7,8 +5,8 @@ import rehypeRaw from 'rehype-raw';
 import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
 import ShareAndCopyLinks from '@/components/ShareAndCopyLinks';
-import SwiperModal from '@/components/SwiperModal';
 import Image from 'next/image';
+import ClientSwiperModal from '@/components/ClientSwiperModal';
 
 interface Params {
   slug: string;
@@ -38,10 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
   }
 
   const imageUrl =
-    post.coverImage?.formats?.large?.url ||
-    post.coverImage?.url ||
-    '';
-
+    post.coverImage?.formats?.large?.url || post.coverImage?.url || '';
   const fullImageUrl = imageUrl.startsWith('http')
     ? imageUrl
     : `${process.env.STRAPI_API_URL}${imageUrl}`;
@@ -73,41 +68,43 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
   };
 }
 
+// Helpers
+const formatDate = (dateString?: string | null) => {
+  if (!dateString) return 'Unknown Date';
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return 'Unknown Date';
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
+
+const calculateReadingTime = (text: string) => {
+  const words = text.trim().split(/\s+/).length;
+  const wordsPerMinute = 200;
+  const minutes = Math.ceil(words / wordsPerMinute);
+  return `${minutes} min read`;
+};
+
 export default async function BlogPage({ params }: Props) {
   const { slug } = await params;
   const post = await getPostBySlug(slug);
-
   if (!post) return notFound();
 
-  // Prepare image URLs
   const coverImageUrl =
-    post.coverImage?.formats?.large?.url ||
-    post.coverImage?.url ||
-    '';
+    post.coverImage?.formats?.large?.url || post.coverImage?.url || '';
   const fullCoverImageUrl = coverImageUrl.startsWith('http')
     ? coverImageUrl
     : `${process.env.STRAPI_API_URL}${coverImageUrl}`;
 
-  // Format dates safely
-  const formatDate = (dateString?: string | null) => {
-    if (!dateString) return 'Unknown Date';
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'Unknown Date';
-    return date.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
-
   const createdDate = formatDate(post.createdAt);
   const updatedDate = formatDate(post.updatedAt);
+  const readingTime = calculateReadingTime(post.content || '');
 
-  // Aggregate images for slider or single display
   const images = [];
-
   if (post.coverImage?.url) {
     images.push({
       url: fullCoverImageUrl,
@@ -126,34 +123,27 @@ export default async function BlogPage({ params }: Props) {
     );
   }
 
-  // Reading time calculation
-  const calculateReadingTime = (text: string) => {
-    const words = text.trim().split(/\s+/).length;
-    const wordsPerMinute = 200;
-    const minutes = Math.ceil(words / wordsPerMinute);
-    return `${minutes} min read`;
-  };
-
-  const readingTime = calculateReadingTime(post.content || '');
-
   return (
     <main className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl max-w-5xl mx-auto my-10">
-      {/* Images Section */}
+      {/* Image Section */}
       {images.length > 1 ? (
-        <SwiperModal images={images} />
+        <ClientSwiperModal images={images} />
       ) : images.length === 1 ? (
         <div className="w-full max-w-2xl mx-auto mb-7 overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-400 shadow-2xl">
           <div className="relative aspect-[16/10] bg-black">
-            <img
+            <Image
               src={images[0].url}
               alt={images[0].alt || ''}
-              className="w-full h-full object-contain transition-all duration-500"
+              fill
+              style={{ objectFit: 'contain' }}
+              className="rounded-xl"
+              priority
             />
           </div>
         </div>
       ) : null}
 
-      {/* Title and Share */}
+      {/* Title + Share */}
       <div className="flex justify-between items-start flex-wrap gap-y-4 mb-6">
         <h1 className="text-4xl font-extrabold w-full md:w-auto text-black">{post.title}</h1>
         <div className="mt-4 sm:mt-6 md:mt-8 lg:mt-10">
@@ -161,11 +151,11 @@ export default async function BlogPage({ params }: Props) {
         </div>
       </div>
 
-      {/* Dates and Reading Time */}
+      {/* Dates + Reading Time */}
       <div className="flex flex-col gap-2 mb-8">
-        <p className="text-gray-500 text-sm">🛠️ Created: {createdDate}</p>
+        <p className="text-gray-700 text-sm">🛠️ Created: {createdDate}</p>
         {post.updatedAt !== post.createdAt && (
-          <p className="text-gray-500 text-sm">🔄 Updated: {updatedDate}</p>
+          <p className="text-gray-700 text-sm">🔄 Updated: {updatedDate}</p>
         )}
         <div className="flex justify-end mt-4">
           <div className="backdrop-blur-sm bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] text-white px-4 py-1.5 rounded-full shadow-lg border border-white/10 flex items-center gap-2 text-sm font-semibold">
@@ -223,18 +213,21 @@ export default async function BlogPage({ params }: Props) {
                 {children}
               </pre>
             ),
-            a: ({ href, children }) => (
-              <a
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300 transition"
-              >
-                {children}
-              </a>
-            ),
+            a: ({ href, children }) => {
+              const safeHref = typeof href === 'string' && href.startsWith('http') ? href : '#';
+              return (
+                <a
+                  href={safeHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300 transition"
+                >
+                  {children}
+                </a>
+              );
+            },
             img: ({ src, alt }) => {
-              if (!src || typeof src !== 'string') return null;
+              if (!src || typeof src !== 'string' || !src.startsWith('http')) return null;
               return (
                 <div className="relative w-full max-w-3xl mx-auto my-8 h-[300px] sm:h-[400px] md:h-[450px]">
                   <Image
@@ -279,6 +272,7 @@ export default async function BlogPage({ params }: Props) {
               title={post.youtubeTitle || post.title}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
+              loading="lazy"
               className="absolute top-0 left-0 w-full h-full"
             />
           </div>

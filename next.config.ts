@@ -7,6 +7,9 @@ const nextConfig = {
     taint: false,
     serverActions: {},  // ✅ Fixed here
   },
+  images: {
+    domains: ['res.cloudinary.com'],
+  },
 };
 
 module.exports = nextConfig;
