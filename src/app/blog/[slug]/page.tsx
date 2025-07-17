@@ -68,7 +68,6 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
   };
 }
 
-// Helpers
 const formatDate = (dateString?: string | null) => {
   if (!dateString) return 'Unknown Date';
   const date = new Date(dateString);
@@ -111,13 +110,10 @@ export default async function BlogPage({ params }: Props) {
       alt: post.title,
     });
   }
-
   if (Array.isArray(post.galleryImages)) {
     images.push(
       ...post.galleryImages.map((img: any) => ({
-        url: img.url.startsWith('http')
-          ? img.url
-          : `${process.env.STRAPI_API_URL}${img.url}`,
+        url: img.url.startsWith('http') ? img.url : `${process.env.STRAPI_API_URL}${img.url}`,
         alt: img.alternativeText || '',
       }))
     );
@@ -125,7 +121,6 @@ export default async function BlogPage({ params }: Props) {
 
   return (
     <main className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl max-w-5xl mx-auto my-10">
-      {/* Image Section */}
       {images.length > 1 ? (
         <ClientSwiperModal images={images} />
       ) : images.length === 1 ? (
@@ -143,7 +138,6 @@ export default async function BlogPage({ params }: Props) {
         </div>
       ) : null}
 
-      {/* Title + Share */}
       <div className="flex justify-between items-start flex-wrap gap-y-4 mb-6">
         <h1 className="text-4xl font-extrabold w-full md:w-auto text-black">{post.title}</h1>
         <div className="mt-4 sm:mt-6 md:mt-8 lg:mt-10">
@@ -151,7 +145,6 @@ export default async function BlogPage({ params }: Props) {
         </div>
       </div>
 
-      {/* Dates + Reading Time */}
       <div className="flex flex-col gap-2 mb-8">
         <p className="text-gray-700 text-sm">🛠️ Created: {createdDate}</p>
         {post.updatedAt !== post.createdAt && (
@@ -164,7 +157,6 @@ export default async function BlogPage({ params }: Props) {
         </div>
       </div>
 
-      {/* Tags */}
       {post.seo?.metaKeywords && (
         <div className="flex flex-wrap gap-4 mb-8">
           {post.seo.metaKeywords.split(',').map((tag) => (
@@ -178,7 +170,6 @@ export default async function BlogPage({ params }: Props) {
         </div>
       )}
 
-      {/* Markdown Content */}
       <div className="prose prose-lg dark:prose-invert max-w-5xl w-full px-4 sm:px-6 lg:px-8 mx-auto text-gray-800 dark:text-gray-200">
         <ReactMarkdown
           remarkPlugins={[remarkGfm]}
@@ -254,7 +245,6 @@ export default async function BlogPage({ params }: Props) {
         </ReactMarkdown>
       </div>
 
-      {/* YouTube Video */}
       {post.youtubeUrl && (
         <section className="mt-16 px-4 sm:px-[5%] md:px-[10%] lg:px-[15%]">
           <h2 className="text-2xl md:text-3xl font-bold mb-6 text-red-600 text-center">
