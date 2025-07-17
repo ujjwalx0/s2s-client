@@ -4,47 +4,83 @@ import { getAllPosts } from '@/lib/api';
 import BlogCard from '@/components/BlogCard';
 import ContactSection from '@/components/ContactSection';
 
+export const metadata = {
+  title: 'Struggle to Success | Real Stories, Real Inspiration',
+  description:
+    'Explore powerful stories of individuals who turned their struggles into success. From IAS aspirants to real-life changemakers — get inspired today!',
+  openGraph: {
+    title: 'Struggle to Success | Real Stories, Real Inspiration',
+    description:
+      'Explore powerful stories of individuals who turned their struggles into success. From IAS aspirants to real-life changemakers — get inspired today!',
+    url: 'https://struggletosuccess.in',
+    siteName: 'Struggle to Success',
+    images: [
+      {
+        url: 'https://struggletosuccess.in/og-image.jpg', // 🔁 Replace this with actual OG image URL
+        width: 1200,
+        height: 630,
+        alt: 'Struggle to Success Cover Image',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  alternates: {
+    canonical: 'https://struggletosuccess.in',
+  },
+};
+
 export default async function Home() {
-  const { posts } = await getAllPosts(1); // Default to page 1 for home
+  const { posts } = await getAllPosts(1);
 
   return (
-    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* 🚀 Hero Section */}
-      <section className="bg-gray-100 dark:bg-neutral-900 rounded-2xl p-10 text-center shadow-sm mb-20">
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight text-neutral-900 dark:text-white mb-4">
-          Struggle to Success
-        </h1>
-        <p className="text-lg text-neutral-700 dark:text-neutral-300 max-w-2xl mx-auto">
-          Real journeys. True struggles. Honest conversations. From IAS dreams to fearless doers — explore what lies beyond books.
-        </p>
-        <a
-          href="/cardsPage/1"
-          className="mt-6 inline-block px-6 py-3 bg-indigo-600 text-white font-medium text-base rounded-full hover:bg-indigo-700 transition"
-        >
-          Explore Stories →
-        </a>
+    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      {/* 🔥 HERO SECTION */}
+      <section className="relative bg-gradient-to-br from-indigo-500 via-purple-600 to-pink-500 rounded-3xl p-12 text-center text-white shadow-xl mb-24 overflow-hidden">
+        <div className="absolute inset-0 bg-white/10 backdrop-blur-md rounded-3xl z-0"></div>
+        <div className="relative z-10">
+          <h1 className="text-5xl sm:text-6xl font-extrabold mb-4 drop-shadow-lg">
+            Struggle to Success
+          </h1>
+          <p className="text-lg sm:text-xl font-medium max-w-3xl mx-auto mb-6 text-white/90">
+            Real journeys. Honest stories. From UPSC aspirants to fearless changemakers — discover voices that matter.
+          </p>
+          <a
+            href="/cardsPage/1"
+            className="inline-block px-8 py-3 bg-white text-indigo-600 font-semibold text-base rounded-full hover:bg-neutral-200 transition shadow-md"
+          >
+            🌟 Explore Stories
+          </a>
+        </div>
       </section>
 
-      {/* 📰 Latest Blogs */}
-      <section className="mb-20">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-neutral-900 dark:text-white">
+      {/* 📰 BLOG LISTING */}
+      <section className="mb-24">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-3xl font-bold text-neutral-900 dark:text-white">
             Latest Blogs
           </h2>
           <a
             href="/cardsPage/1"
-            className="text-indigo-600 font-medium hover:underline"
+            className="text-indigo-600 font-medium hover:underline text-sm"
           >
             View All →
           </a>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-          {posts.slice(0, 8).map((post: any) => (
-            <BlogCard key={post.id} post={post} />
-          ))}
-        </div>
+
+        {posts?.length === 0 ? (
+          <p className="text-neutral-600 dark:text-neutral-300">No blog posts found.</p>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+
+            {posts.slice(0, 8).map((post: any) => (
+              <BlogCard key={post.id} post={post} />
+            ))}
+          </div>
+        )}
       </section>
 
+      {/* 📬 CONTACT SECTION */}
       <ContactSection />
     </main>
   );

@@ -3,11 +3,10 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // Add these experimental settings
   experimental: {
     taint: false,
-    serverActions: true,
-  }
+    serverActions: {},  // ✅ Fixed here
+  },
 };
 
 module.exports = nextConfig;
