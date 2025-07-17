@@ -8,6 +8,7 @@ import rehypeHighlight from 'rehype-highlight';
 import remarkGfm from 'remark-gfm';
 import ShareAndCopyLinks from '@/components/ShareAndCopyLinks';
 import SwiperModal from '@/components/SwiperModal';
+import Image from 'next/image';
 
 interface Params {
   slug: string;
@@ -126,23 +127,21 @@ export default async function BlogPage({ params }: Props) {
         <SwiperModal images={images} />
       ) : images.length === 1 ? (
         <div className="w-full max-w-2xl mx-auto mb-7 overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-400 shadow-2xl">
-        <div className="relative aspect-[16/10] bg-black">
-          <img
-            src={images[0].url}
-            alt={images[0].alt || ''}
-            className="w-full h-full object-contain transition-all duration-500"
-          />
+          <div className="relative aspect-[16/10] bg-black">
+            <img
+              src={images[0].url}
+              alt={images[0].alt || ''}
+              className="w-full h-full object-contain transition-all duration-500"
+            />
+          </div>
         </div>
-      </div>
-      
       ) : null}
 
       {/* Title and Share */}
       <div className="flex justify-between items-start flex-wrap gap-y-4 mb-6">
         <h1 className="text-4xl font-extrabold w-full md:w-auto text-black">{post.title}</h1>
         <div className="mt-4 sm:mt-6 md:mt-8 lg:mt-10">
-        <ShareAndCopyLinks slug={post.slug} />
-
+          <ShareAndCopyLinks slug={post.slug} />
         </div>
       </div>
 
@@ -174,78 +173,82 @@ export default async function BlogPage({ params }: Props) {
       )}
 
       {/* Markdown Content */}
- 
       <div className="prose prose-lg dark:prose-invert max-w-5xl w-full px-4 sm:px-6 lg:px-8 mx-auto text-gray-800 dark:text-gray-200">
-  <ReactMarkdown
-    remarkPlugins={[remarkGfm]}
-    rehypePlugins={[rehypeRaw, rehypeHighlight]}
-    components={{
-      h1: ({ children }) => (
-        <h1 className="text-5xl font-bold mt-12 mb-6 tracking-tight leading-tight border-b pb-2 border-gray-300 dark:border-gray-600">
-          {children}
-        </h1>
-      ),
-      h2: ({ children }) => (
-        <h2 className="text-3xl font-semibold mt-10 mb-4 border-l-4 pl-4 border-gray-300 dark:border-gray-600">
-          {children}
-        </h2>
-      ),
-      h3: ({ children }) => (
-        <h3 className="text-2xl font-medium mt-8 mb-3">
-          {children}
-        </h3>
-      ),
-      p: ({ children }) => (
-        <p className="mb-5 text-lg leading-relaxed">
-          {children}
-        </p>
-      ),
-      li: ({ children }) => (
-        <li className="mb-2 ml-6 list-disc text-base">
-          {children}
-        </li>
-      ),
-      code: ({ children }) => (
-        <code className="bg-gray-100 dark:bg-gray-800 text-pink-600 dark:text-pink-400 px-2 py-1 rounded text-sm">
-          {children}
-        </code>
-      ),
-      pre: ({ children }) => (
-        <pre className="bg-gray-900 text-white text-sm font-mono p-6 rounded-xl shadow-md overflow-x-auto my-8">
-          {children}
-        </pre>
-      ),
-      a: ({ href, children }) => (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300 transition"
-        >
-          {children}
-        </a>
-      ),
-      img: ({ src, alt }) => (
-        <img
-          src={src || ''}
-          alt={alt || ''}
-          className="rounded-xl shadow-xl max-w-full h-auto mx-auto my-8 object-contain"
-        />
-      ),
-      blockquote: ({ children }) => (
-        <blockquote className="border-l-4 border-gray-400 dark:border-gray-500 bg-gray-50 dark:bg-gray-800/50 italic pl-6 py-4 my-6 rounded-md text-gray-700 dark:text-gray-300">
-          {children}
-        </blockquote>
-      ),
-      hr: () => (
-        <hr className="my-12 border-gray-300 dark:border-gray-600" />
-      ),
-    }}
-  >
-    {post.content}
-  </ReactMarkdown>
-</div>
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[rehypeRaw, rehypeHighlight]}
+          components={{
+            h1: ({ children }) => (
+              <h1 className="text-5xl font-bold mt-12 mb-6 tracking-tight leading-tight border-b pb-2 border-gray-300 dark:border-gray-600">
+                {children}
+              </h1>
+            ),
+            h2: ({ children }) => (
+              <h2 className="text-3xl font-semibold mt-10 mb-4 border-l-4 pl-4 border-gray-300 dark:border-gray-600">
+                {children}
+              </h2>
+            ),
+            h3: ({ children }) => (
+              <h3 className="text-2xl font-medium mt-8 mb-3">{children}</h3>
+            ),
+            p: ({ children }) => (
+              <p className="mb-5 text-lg leading-relaxed">{children}</p>
+            ),
+            li: ({ children }) => (
+              <li className="mb-2 ml-6 list-disc text-base">{children}</li>
+            ),
+            code: ({ children }) => (
+              <code className="bg-gray-100 dark:bg-gray-800 text-pink-600 dark:text-pink-400 px-2 py-1 rounded text-sm">
+                {children}
+              </code>
+            ),
+            pre: ({ children }) => (
+              <pre className="bg-gray-900 text-white text-sm font-mono p-6 rounded-xl shadow-md overflow-x-auto my-8">
+                {children}
+              </pre>
+            ),
+            a: ({ href, children }) => (
+              <a
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300 transition"
+              >
+                {children}
+              </a>
+            ),
 
+            // The important change is here, use Next.js Image and filter src:
+            img: ({ src, alt }) => {
+              if (!src || typeof src !== 'string') {
+                return null; // skip if invalid src (like Blob)
+              }
+              return (
+                <div className="relative w-full max-w-3xl mx-auto my-8 h-[300px] sm:h-[400px] md:h-[450px]">
+                  <Image
+                    src={src}
+                    alt={alt || ''}
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
+                    style={{ objectFit: 'contain' }}
+                    className="rounded-xl shadow-xl"
+                    priority={false}
+                  />
+                </div>
+              );
+            },
+
+            blockquote: ({ children }) => (
+              <blockquote className="border-l-4 border-gray-400 dark:border-gray-500 bg-gray-50 dark:bg-gray-800/50 italic pl-6 py-4 my-6 rounded-md text-gray-700 dark:text-gray-300">
+                {children}
+              </blockquote>
+            ),
+            hr: () => <hr className="my-12 border-gray-300 dark:border-gray-600" />,
+          }}
+        >
+          {post.content}
+        </ReactMarkdown>
+      </div>
 
       {/* YouTube Video */}
       {post.youtubeUrl && (
@@ -255,9 +258,11 @@ export default async function BlogPage({ params }: Props) {
           </h2>
           <div className="relative w-full pb-[56.25%] rounded-xl overflow-hidden shadow-2xl">
             <iframe
-              src={post.youtubeUrl.includes('youtu.be/')
-                ? `https://www.youtube.com/embed/${post.youtubeUrl.split('youtu.be/')[1]?.split('?')[0]}`
-                : post.youtubeUrl}
+              src={
+                post.youtubeUrl.includes('youtu.be/')
+                  ? `https://www.youtube.com/embed/${post.youtubeUrl.split('youtu.be/')[1]?.split('?')[0]}`
+                  : post.youtubeUrl
+              }
               title={post.youtubeTitle || post.title}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
