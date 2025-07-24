@@ -37,11 +37,11 @@ const BlogCard: FC<{ post: BlogPost }> = ({ post }) => {
       className="w-full h-full flex flex-col overflow-hidden rounded-md border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-3 transition-all duration-200"
 >
 {post.imageUrl && (
- <div className="w-full overflow-hidden rounded-full h-48 sm:h-40 md:h-32">
+ <div className="w-full overflow-hidden  h-48 sm:h-40 md:h-32">
  <img
    src={post.imageUrl}
    alt={post.title}
-   className="w-full h-full object-contain rounded-full"
+   className="w-full h-full object-contain"
    loading="lazy"
  />
 </div>

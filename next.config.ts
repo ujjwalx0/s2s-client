@@ -5,7 +5,7 @@ const nextConfig = {
   },
   experimental: {
     taint: false,
-    serverActions: {},  // ✅ Fixed here
+    serverActions: {},  
   },
   images: {
     domains: ['res.cloudinary.com'],
