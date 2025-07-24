@@ -9,8 +9,10 @@ function isValidArray(val: any): val is any[] {
 export async function getAllPosts(page: number = 1) {
   try {
     const res = await fetch(
-      `${process.env.STRAPI_API_URL}/api/posts?populate[coverImage][populate]=*&populate[seo][populate]=*&sort[0]=publishedAt:desc&pagination[page]=${page}&pagination[pageSize]=${PAGE_SIZE}`
+      `${process.env.STRAPI_API_URL}/api/posts?populate[coverImage][populate]=*&populate[seo][populate]=*&sort[0]=publishedAt:desc&filters[publishedAt][$notNull]=true&pagination[page]=${page}&pagination[pageSize]=${PAGE_SIZE}`,
+     // { cache: 'no-store' } // optional, if you want fresh data every time
     );
+    
 
     const data = await res.json();
    // console.log('📦 getAllPosts Response:', data);
