@@ -120,7 +120,13 @@ export default async function BlogPage({ params }: Props) {
   }
 
   return (
-    <main className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl max-w-5xl mx-auto my-10">
+    <main className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl max-w-5xl mx-auto my-6">
+      <div className="mb-6 mt-2 text-center">
+  <h1 className="text-5xl font-bold text-gray-900 dark:text-white leading-tight tracking-tight mb-4">
+    {post.title}
+  </h1>
+  <div className="w-24 h-1 mx-auto bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full mb-2" />
+</div>
       {images.length > 1 ? (
         <ClientSwiperModal images={images} />
       ) : images.length === 1 ? (
@@ -139,7 +145,7 @@ export default async function BlogPage({ params }: Props) {
       ) : null}
 
       <div className="flex justify-between items-start flex-wrap gap-y-4 mb-6">
-        <h1 className="text-4xl font-extrabold w-full md:w-auto text-black">{post.title}</h1>
+        {/* <h1 className="text-4xl font-extrabold w-full md:w-auto text-black">{post.title}</h1> */}
         <div className="mt-4 sm:mt-6 md:mt-8 lg:mt-10">
           <ShareAndCopyLinks slug={post.slug} />
         </div>
