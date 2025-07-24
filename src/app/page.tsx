@@ -16,7 +16,7 @@ export const metadata = {
     siteName: 'Struggle to Success',
     images: [
       {
-        url: 'https://struggletosuccess.in/og-image.jpg', // 🔁 Replace this with actual OG image URL
+        url: 'https://struggletosuccess.in/og-image.jpg', 
         width: 1200,
         height: 630,
         alt: 'Struggle to Success Cover Image',
