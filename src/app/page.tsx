@@ -30,8 +30,13 @@ export const metadata = {
   },
 };
 
-export default async function Home() {
-  const { posts } = await getAllPosts(1); // ✅ No custom logic, same as other page
+// export default async function Home() {
+//   const { posts } = await getAllPosts(1); // ✅ No custom logic, same as other page
+
+  export default async function Home() {
+    
+    const pageNumber = 1;
+    const { posts, pagination } = await getAllPosts(pageNumber);
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
