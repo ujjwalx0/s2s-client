@@ -1,5 +1,5 @@
 // src/app/page.tsx
-
+export const dynamic = 'force-dynamic';
 import { getAllPosts } from '@/lib/api';
 import BlogCard from '@/components/BlogCard';
 import ContactSection from '@/components/ContactSection';
