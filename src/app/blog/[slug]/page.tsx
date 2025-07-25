@@ -7,6 +7,7 @@ import remarkGfm from 'remark-gfm';
 import ShareAndCopyLinks from '@/components/ShareAndCopyLinks';
 import Image from 'next/image';
 import ClientSwiperModal from '@/components/ClientSwiperModal';
+import AdBanner from '@/components/AdBanner';
 
 interface Params {
   slug: string;
@@ -121,6 +122,7 @@ export default async function BlogPage({ params }: Props) {
 
   return (
     <main className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl max-w-5xl mx-auto my-6">
+      <AdBanner />
       <div className="mb-6 mt-2 text-center">
       <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 dark:text-white leading-snug tracking-tight mb-4">
 

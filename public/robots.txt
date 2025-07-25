@@ -1,4 +1,7 @@
-User-agent: *  
-Allow: /  
-  
-Sitemap: https://www.struggletosuccess.in/sitemap.xml 
+User-agent: *
+Allow: /
+
+User-agent: Mediapartners-Google
+Disallow:
+
+Sitemap: https://www.struggletosuccess.in/sitemap.xml
