@@ -122,7 +122,8 @@ export default async function BlogPage({ params }: Props) {
   return (
     <main className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl max-w-5xl mx-auto my-6">
       <div className="mb-6 mt-2 text-center">
-      <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight tracking-tight mb-4">
+      <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 dark:text-white leading-snug tracking-tight mb-4">
+
 
     {post.title}
   </h1>
