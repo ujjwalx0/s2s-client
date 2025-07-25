@@ -16,7 +16,7 @@ export const metadata = {
     siteName: 'Struggle to Success',
     images: [
       {
-        url: 'https://struggletosuccess.in/og-image.jpg', 
+        url: 'https://struggletosuccess.in/og-image.jpg',
         width: 1200,
         height: 630,
         alt: 'Struggle to Success Cover Image',
@@ -31,7 +31,7 @@ export const metadata = {
 };
 
 export default async function Home() {
-  const { posts } = await getAllPosts(1);
+  const { posts } = await getAllPosts(1); // ✅ No custom logic, same as other page
 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -72,8 +72,7 @@ export default async function Home() {
           <p className="text-neutral-600 dark:text-neutral-300">No blog posts found.</p>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-
-            {posts.slice(0, 8).map((post: any) => (
+            {posts.map((post: any) => (
               <BlogCard key={post.id} post={post} />
             ))}
           </div>
