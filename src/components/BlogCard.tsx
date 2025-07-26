@@ -29,7 +29,15 @@ const stripMarkdown = (text: string): string =>
 
 const BlogCard: FC<{ post: BlogPost }> = ({ post }) => {
   const date = post.publishedAt ? formatDate(post.publishedAt) : '';
-  const readingTime = Math.max(Math.ceil((post.content?.length || 400) / 800), 1);
+ // const readingTime = Math.max(Math.ceil((post.content?.length || 400) / 800), 1);
+
+  const calculateReadingTime = (text: string) => {
+    const words = text.trim().split(/\s+/).length;
+    const wordsPerMinute = 200;
+    const minutes = Math.ceil(words / wordsPerMinute);
+    return `${minutes} `;
+  };
+  const readingTime = calculateReadingTime(post.content || '');
 
   return (
     <Link

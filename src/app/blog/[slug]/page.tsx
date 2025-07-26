@@ -8,6 +8,8 @@ import ShareAndCopyLinks from '@/components/ShareAndCopyLinks';
 import Image from 'next/image';
 import ClientSwiperModal from '@/components/ClientSwiperModal';
 import AdBanner from '@/components/AdBanner';
+import ClientDate from '@/components/ClientDate';
+
 
 interface Params {
   slug: string;
@@ -69,18 +71,6 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
   };
 }
 
-const formatDate = (dateString?: string | null) => {
-  if (!dateString) return 'Unknown Date';
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) return 'Unknown Date';
-  return date.toLocaleString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};
 
 const calculateReadingTime = (text: string) => {
   const words = text.trim().split(/\s+/).length;
@@ -100,8 +90,6 @@ export default async function BlogPage({ params }: Props) {
     ? coverImageUrl
     : `${process.env.STRAPI_API_URL}${coverImageUrl}`;
 
-  const createdDate = formatDate(post.createdAt);
-  const updatedDate = formatDate(post.updatedAt);
   const readingTime = calculateReadingTime(post.content || '');
 
   const images = [];
@@ -121,9 +109,9 @@ export default async function BlogPage({ params }: Props) {
   }
 
   return (
-    <main className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl max-w-5xl mx-auto my-6">
+    <main className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl max-w-5xl mx-auto mb-6 pt-0 md:pt-0 sm:pt-0">
       <AdBanner />
-      <div className="mb-6 mt-2 text-center">
+      <div className="mb-6 mt-0 text-center">
       <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 dark:text-white leading-snug tracking-tight mb-4">
 
 
@@ -155,17 +143,21 @@ export default async function BlogPage({ params }: Props) {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 mb-8">
-        <p className="text-gray-700 text-sm">🛠️ Created: {createdDate}</p>
-        {post.updatedAt !== post.createdAt && (
-          <p className="text-gray-700 text-sm">🔄 Updated: {updatedDate}</p>
-        )}
-        <div className="flex justify-end mt-4">
-          <div className="backdrop-blur-sm bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] text-white px-4 py-1.5 rounded-full shadow-lg border border-white/10 flex items-center gap-2 text-sm font-semibold">
-            ⏱️ {readingTime}
-          </div>
-        </div>
-      </div>
+      <div className="flex flex-wrap justify-between items-start gap-y-2 mb-8">
+      <div className="flex flex-col text-gray-700 text-sm gap-1">
+  <p>📢 Published: <ClientDate iso={post.createdAt} /></p>
+  {post.updatedAt !== post.createdAt && (
+    <p>🔄 Updated: <ClientDate iso={post.updatedAt} /></p>
+  )}
+</div>
+
+
+
+  <div className="backdrop-blur-sm bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] text-white px-4 py-1.5 rounded-full shadow-lg border border-white/10 flex items-center gap-2 text-sm font-semibold">
+    ⏱️ {readingTime}
+  </div>
+</div>
+
 
       {post.seo?.metaKeywords && (
         <div className="flex flex-wrap gap-4 mb-8">
