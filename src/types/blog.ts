@@ -24,4 +24,12 @@ export interface BlogPost {
   allowComments?: boolean | null;
   youtubeTitle?: string | null;
   imageTitle?: string | null;
+  author?: {
+    name: string;
+    avatar: {
+      url: string;
+      [key: string]: any;
+    } | null;
+  } | null;
+
 }

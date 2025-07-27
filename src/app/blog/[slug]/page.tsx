@@ -8,7 +8,8 @@ import ShareAndCopyLinks from '@/components/ShareAndCopyLinks';
 import Image from 'next/image';
 import ClientSwiperModal from '@/components/ClientSwiperModal';
 import AdBanner from '@/components/AdBanner';
-import ClientDate from '@/components/ClientDate';
+import AuthorBadgeWithDate from '@/components/AuthorBadgeWithDate';
+
 
 
 interface Params {
@@ -108,9 +109,11 @@ export default async function BlogPage({ params }: Props) {
     );
   }
 
+ 
+
   return (
     <main className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl max-w-5xl mx-auto mb-6 pt-0 md:pt-0 sm:pt-0">
-      <AdBanner />
+      
       <div className="mb-6 mt-0 text-center">
       <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 dark:text-white leading-snug tracking-tight mb-4">
 
@@ -136,29 +139,25 @@ export default async function BlogPage({ params }: Props) {
         </div>
       ) : null}
 
-      <div className="flex justify-between items-start flex-wrap gap-y-4 mb-6">
-        {/* <h1 className="text-4xl font-extrabold w-full md:w-auto text-black">{post.title}</h1> */}
-        <div className="mt-4 sm:mt-6 md:mt-8 lg:mt-10">
-          <ShareAndCopyLinks slug={post.slug} />
-        </div>
-      </div>
-
-      <div className="flex flex-wrap justify-between items-start gap-y-2 mb-8">
-      <div className="flex flex-col text-gray-700 text-sm gap-1">
-  <p>📢 Published: <ClientDate iso={post.createdAt} /></p>
-  {post.updatedAt !== post.createdAt && (
-    <p>🔄 Updated: <ClientDate iso={post.updatedAt} /></p>
-  )}
-</div>
-
-
-
-  <div className="backdrop-blur-sm bg-gradient-to-r from-[#0f0c29] via-[#302b63] to-[#24243e] text-white px-4 py-1.5 rounded-full shadow-lg border border-white/10 flex items-center gap-2 text-sm font-semibold">
+<div className="flex justify-between items-center gap-4 mb-6">
+  <div className="w-auto mt-4">
+    <ShareAndCopyLinks slug={post.slug} />
+  </div>
+  
+  <div className="mt-4 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 to-teal-400 text-white text-sm font-semibold shadow-md">
     ⏱️ {readingTime}
   </div>
 </div>
 
+<div className="flex flex-wrap justify-between items-start gap-y-2 mb-4">
 
+<AuthorBadgeWithDate
+  name={post.author?.name || 'Unknown'}
+  avatarUrl={post.author?.avatar?.url || null}
+  createdAt={post.createdAt}
+  updatedAt={post.updatedAt}
+/>
+</div>
       {post.seo?.metaKeywords && (
         <div className="flex flex-wrap gap-4 mb-8">
           {post.seo.metaKeywords.split(',').map((tag) => (
@@ -270,6 +269,9 @@ export default async function BlogPage({ params }: Props) {
           </div>
         </section>
       )}
+
+<AdBanner />
     </main>
+    
   );
 }

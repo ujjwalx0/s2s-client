@@ -1,6 +1,6 @@
 import { BlogPost } from '@/types/blog';
 
-const PAGE_SIZE = 6; 
+const PAGE_SIZE = 6;
 
 function isValidArray(val: any): val is any[] {
   return Array.isArray(val);
@@ -9,13 +9,21 @@ function isValidArray(val: any): val is any[] {
 export async function getAllPosts(page: number = 1) {
   try {
     const res = await fetch(
-      `${process.env.STRAPI_API_URL}/api/posts?populate[coverImage][populate]=*&populate[seo][populate]=*&sort[0]=publishedAt:desc&filters[publishedAt][$notNull]=true&pagination[page]=${page}&pagination[pageSize]=${PAGE_SIZE}`,
-     // { cache: 'no-store' } // optional, if you want fresh data every time
+      `${process.env.STRAPI_API_URL}/api/posts?` +
+        `populate[coverImage][populate]=*&` +
+        `populate[seo][populate]=*&` +
+        `populate[author][populate]=avatar&` + // ✅ Author full data
+        `sort[0]=publishedAt:desc&` +
+        `filters[publishedAt][$notNull]=true&` +
+        `pagination[page]=${page}&pagination[pageSize]=${PAGE_SIZE}`,
+      {
+        // ⏱️ Optional: Disable cache for always fresh content
+        // cache: 'no-store',
+      }
     );
-    
 
     const data = await res.json();
-   // console.log('📦 getAllPosts Response:', data);
+    //console.log('📦 getAllPosts API Response:', JSON.stringify(data, null, 2));
 
     if (isValidArray(data?.data)) {
       return {
@@ -46,9 +54,16 @@ export async function getAllPosts(page: number = 1) {
 export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   try {
     const res = await fetch(
-      `${process.env.STRAPI_API_URL}/api/posts?filters[slug][$eq]=${slug}&populate[coverImage][populate]=*&populate[galleryImages][populate]=*&populate[seo][populate]=*`
+      `${process.env.STRAPI_API_URL}/api/posts?` +
+        `filters[slug][$eq]=${slug}&` +
+        `populate[coverImage][populate]=*&` +
+        `populate[galleryImages][populate]=*&` +
+        `populate[seo][populate]=*&` +
+        `populate[author][populate]=avatar`
     );
+
     const data = await res.json();
+    //console.log('📦 getPostBySlug API Response:', data);
 
     if (isValidArray(data?.data) && data.data[0]) {
       return formatPost(data.data[0]);
@@ -62,13 +77,19 @@ export async function getPostBySlug(slug: string): Promise<BlogPost | null> {
   }
 }
 
-
-
 export async function getPostsByTag(tag: string, page = 1) {
   try {
-    const url = `${process.env.STRAPI_API_URL}/api/posts?filters[tags][name][$eq]=${tag}&populate[coverImage][populate]=*&populate[seo][populate]=*&sort[0]=publishedAt:desc&pagination[page]=${page}&pagination[pageSize]=${PAGE_SIZE}`;
+    const url = `${process.env.STRAPI_API_URL}/api/posts?` +
+      `filters[tags][name][$eq]=${tag}&` +
+      `populate[coverImage][populate]=*&` +
+      `populate[seo][populate]=*&` +
+      `populate[author][populate]=avatar&` +
+      `sort[0]=publishedAt:desc&` +
+      `pagination[page]=${page}&pagination[pageSize]=${PAGE_SIZE}`;
+
     const res = await fetch(url);
     const data = await res.json();
+    //console.log('📦 getPostsByTag API Response:', JSON.stringify(data, null, 2));
 
     if (isValidArray(data?.data)) {
       return {
@@ -97,9 +118,18 @@ export async function getPostsByTag(tag: string, page = 1) {
 
 export async function searchPosts(query: string, page = 1) {
   try {
-    const url = `${process.env.STRAPI_API_URL}/api/posts?filters[$or][0][title][$containsi]=${query}&filters[$or][1][content][$containsi]=${query}&filters[$or][2][slug][$containsi]=${query}&populate[coverImage][populate]=*&populate[seo][populate]=*&pagination[page]=${page}&pagination[pageSize]=${PAGE_SIZE}`;
+    const url = `${process.env.STRAPI_API_URL}/api/posts?` +
+      `filters[$or][0][title][$containsi]=${query}&` +
+      `filters[$or][1][content][$containsi]=${query}&` +
+      `filters[$or][2][slug][$containsi]=${query}&` +
+      `populate[coverImage][populate]=*&` +
+      `populate[seo][populate]=*&` +
+      `populate[author][populate]=avatar&` +
+      `pagination[page]=${page}&pagination[pageSize]=${PAGE_SIZE}`;
+
     const res = await fetch(url);
     const data = await res.json();
+    //console.log('📦 searchPosts API Response:', JSON.stringify(data, null, 2));
 
     if (isValidArray(data?.data)) {
       return {
@@ -160,6 +190,30 @@ function formatPost(post: any): BlogPost {
     ? getFullImageUrl(coverImageData.formats.medium.url)
     : getFullImageUrl(coverImageData.url);
 
+    const authorWrapper = attrs?.author;
+    
+    // Handle different possible shapes of author object
+    const authorData =
+      authorWrapper?.data?.attributes ??
+      authorWrapper?.attributes ??
+      authorWrapper ??
+      null;
+    
+    // Format final author object with proper avatar extraction
+    const avatarRaw = authorData?.avatar;
+    
+    const author = authorData
+      ? {
+          name: authorData.name,
+          avatar: avatarRaw?.url
+            ? {
+                url: getFullImageUrl(avatarRaw.url),
+                ...avatarRaw,
+              }
+            : null,
+        }
+      : null;
+
   return {
     id: post.id,
     documentId: post?.id?.toString(),
@@ -199,7 +253,7 @@ function formatPost(post: any): BlogPost {
     imageTitle: attrs?.imageTitle || post?.imageTitle || null,
     allowComments:
       attrs?.allowComments ?? post?.allowComments ?? null,
+    author,
   };
 }
 
-  

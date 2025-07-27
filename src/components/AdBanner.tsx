@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 
-// ✅ TypeScript fix
+// ✅ TypeScript fix for window.adsbygoogle
 declare global {
   interface Window {
     adsbygoogle: any[];
@@ -19,13 +19,14 @@ export default function AdBanner() {
   }, []);
 
   return (
-    <div className="my-8 flex justify-center">
+    <div className="my-8 w-full flex justify-center">
       <ins
         className="adsbygoogle"
-        style={{ display: 'block' }}
+        style={{ display: 'block', width: '100%' }}
         data-ad-client="ca-pub-9649093139404963"
-        data-ad-slot="8976671382" // ✅ Slot ID yaha use karo
+        data-ad-slot="8976671382"
         data-ad-format="autorelaxed"
+        data-full-width-responsive="true"
       />
     </div>
   );
