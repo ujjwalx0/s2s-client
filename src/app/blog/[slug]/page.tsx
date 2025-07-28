@@ -106,10 +106,11 @@ export default async function BlogPage({ params }: Props) {
   
   return (
     <main className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl max-w-5xl mx-auto mb-2 pt-0">
-      <div className="mb-6 mt-0 text-center">
-        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 dark:text-white leading-snug tracking-tight mb-4">
-          {post.title}
-        </h1>
+      <div className="mb-6 mt-2 text-center">
+      <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-black leading-snug tracking-tight mb-4">
+  {post.title}
+</h1>
+
         <div className="w-24 h-1 mx-auto bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full mb-2" />
       </div>
 
@@ -189,9 +190,9 @@ export default async function BlogPage({ params }: Props) {
         </section>
       )}
 
-      {/* <div className="mt-4">
+       <div className="mt-2">
         <AdBanner />
-      </div> */}
+      </div> 
     </main>
   );
 }

@@ -48,11 +48,11 @@ const AuthorBadgeWithDate = ({ name, avatarUrl, createdAt, updatedAt }: Props) =
             {name?.[0] ?? '?'}
           </div>
         )}
-        <span className="text-sm font-medium text-gray-800 dark:text-gray-200 mt-1">{name}</span>
+        <span className="text-sm font-medium text-black mt-1">{name}</span>
       </div>
 
       {/* Right: Dates */}
-      <div className="flex flex-col justify-center text-sm text-gray-700 dark:text-gray-300">
+      <div className="flex flex-col justify-center text-sm text-black">
         <p>📢 Published: {published}</p>
         {updated && <p>🔄 Updated: {updated}</p>}
       </div>
