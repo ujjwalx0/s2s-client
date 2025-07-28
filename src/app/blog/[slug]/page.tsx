@@ -1,16 +1,11 @@
 import { getPostBySlug } from '@/lib/api';
 import { notFound } from 'next/navigation';
-import ReactMarkdown from 'react-markdown';
-import rehypeRaw from 'rehype-raw';
-import rehypeHighlight from 'rehype-highlight';
-import remarkGfm from 'remark-gfm';
 import ShareAndCopyLinks from '@/components/ShareAndCopyLinks';
 import Image from 'next/image';
 import ClientSwiperModal from '@/components/ClientSwiperModal';
 import AdBanner from '@/components/AdBanner';
 import AuthorBadgeWithDate from '@/components/AuthorBadgeWithDate';
-
-
+import MarkdownRenderer from '@/components/MarkdownRenderer';
 
 interface Params {
   slug: string;
@@ -72,7 +67,6 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
   };
 }
 
-
 const calculateReadingTime = (text: string) => {
   const words = text.trim().split(/\s+/).length;
   const wordsPerMinute = 200;
@@ -109,19 +103,16 @@ export default async function BlogPage({ params }: Props) {
     );
   }
 
- 
-
+  
   return (
-    <main className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl max-w-5xl mx-auto mb-6 pt-0 md:pt-0 sm:pt-0">
-      
+    <main className="bg-white p-4 sm:p-6 md:p-8 rounded-3xl max-w-5xl mx-auto mb-2 pt-0">
       <div className="mb-6 mt-0 text-center">
-      <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 dark:text-white leading-snug tracking-tight mb-4">
+        <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl font-bold text-gray-900 dark:text-white leading-snug tracking-tight mb-4">
+          {post.title}
+        </h1>
+        <div className="w-24 h-1 mx-auto bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full mb-2" />
+      </div>
 
-
-    {post.title}
-  </h1>
-  <div className="w-24 h-1 mx-auto bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full mb-2" />
-</div>
       {images.length > 1 ? (
         <ClientSwiperModal images={images} />
       ) : images.length === 1 ? (
@@ -139,25 +130,24 @@ export default async function BlogPage({ params }: Props) {
         </div>
       ) : null}
 
-<div className="flex justify-between items-center gap-4 mb-6">
-  <div className="w-auto mt-4">
-    <ShareAndCopyLinks slug={post.slug} />
-  </div>
-  
-  <div className="mt-4 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 to-teal-400 text-white text-sm font-semibold shadow-md">
-    ⏱️ {readingTime}
-  </div>
-</div>
+      <div className="flex justify-between items-center gap-4 mb-6">
+        <div className="w-auto mt-4">
+          <ShareAndCopyLinks slug={post.slug} />
+        </div>
+        <div className="mt-4 px-4 py-2 rounded-full bg-gradient-to-r from-blue-500 to-teal-400 text-white text-sm font-semibold shadow-md">
+          ⏱️ {readingTime}
+        </div>
+      </div>
 
-<div className="flex flex-wrap justify-between items-start gap-y-2 mb-4">
+      <div className="flex flex-wrap justify-between items-start gap-y-2 mb-4">
+        <AuthorBadgeWithDate
+          name={post.author?.name || 'Unknown'}
+          avatarUrl={post.author?.avatar?.url || null}
+          createdAt={post.createdAt}
+          updatedAt={post.updatedAt}
+        />
+      </div>
 
-<AuthorBadgeWithDate
-  name={post.author?.name || 'Unknown'}
-  avatarUrl={post.author?.avatar?.url || null}
-  createdAt={post.createdAt}
-  updatedAt={post.updatedAt}
-/>
-</div>
       {post.seo?.metaKeywords && (
         <div className="flex flex-wrap gap-4 mb-8">
           {post.seo.metaKeywords.split(',').map((tag) => (
@@ -171,83 +161,12 @@ export default async function BlogPage({ params }: Props) {
         </div>
       )}
 
-      <div className="prose prose-lg dark:prose-invert max-w-5xl w-full px-4 sm:px-6 lg:px-8 mx-auto text-gray-800 dark:text-gray-200">
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[rehypeRaw, rehypeHighlight]}
-          components={{
-            h1: ({ children }) => (
-              <h1 className="text-5xl font-bold mt-12 mb-6 tracking-tight leading-tight border-b pb-2 border-gray-300 dark:border-gray-600">
-                {children}
-              </h1>
-            ),
-            h2: ({ children }) => (
-              <h2 className="text-3xl font-semibold mt-10 mb-4 border-l-4 pl-4 border-gray-300 dark:border-gray-600">
-                {children}
-              </h2>
-            ),
-            h3: ({ children }) => (
-              <h3 className="text-2xl font-medium mt-8 mb-3">{children}</h3>
-            ),
-            p: ({ children }) => (
-              <p className="mb-5 text-lg leading-relaxed">{children}</p>
-            ),
-            li: ({ children }) => (
-              <li className="mb-2 ml-6 list-disc text-base">{children}</li>
-            ),
-            code: ({ children }) => (
-              <code className="bg-gray-100 dark:bg-gray-800 text-pink-600 dark:text-pink-400 px-2 py-1 rounded text-sm">
-                {children}
-              </code>
-            ),
-            pre: ({ children }) => (
-              <pre className="bg-gray-900 text-white text-sm font-mono p-6 rounded-xl shadow-md overflow-x-auto my-8">
-                {children}
-              </pre>
-            ),
-            a: ({ href, children }) => {
-              const safeHref = typeof href === 'string' && href.startsWith('http') ? href : '#';
-              return (
-                <a
-                  href={safeHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-600 dark:text-blue-400 underline hover:text-blue-800 dark:hover:text-blue-300 transition"
-                >
-                  {children}
-                </a>
-              );
-            },
-            img: ({ src, alt }) => {
-              if (!src || typeof src !== 'string' || !src.startsWith('http')) return null;
-              return (
-                <div className="relative w-full max-w-3xl mx-auto my-8 h-[300px] sm:h-[400px] md:h-[450px]">
-                  <Image
-                    src={src}
-                    alt={alt || ''}
-                    fill
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 800px"
-                    style={{ objectFit: 'contain' }}
-                    className="rounded-xl shadow-xl"
-                    priority={false}
-                  />
-                </div>
-              );
-            },
-            blockquote: ({ children }) => (
-              <blockquote className="border-l-4 border-gray-400 dark:border-gray-500 bg-gray-50 dark:bg-gray-800/50 italic pl-6 py-4 my-6 rounded-md text-gray-700 dark:text-gray-300">
-                {children}
-              </blockquote>
-            ),
-            hr: () => <hr className="my-12 border-gray-300 dark:border-gray-600" />,
-          }}
-        >
-          {post.content}
-        </ReactMarkdown>
-      </div>
+      {/* Optimized Markdown content */}
+      <MarkdownRenderer content={post.content || ''} />
+
 
       {post.youtubeUrl && (
-        <section className="mt-16 px-4 sm:px-[5%] md:px-[10%] lg:px-[15%]">
+        <section className="mt-8 px-4 sm:px-[5%] md:px-[10%] lg:px-[15%]">
           <h2 className="text-2xl md:text-3xl font-bold mb-6 text-red-600 text-center">
             🎥 {post.youtubeTitle || 'Watch Video'}
           </h2>
@@ -270,8 +189,9 @@ export default async function BlogPage({ params }: Props) {
         </section>
       )}
 
-<AdBanner />
+      {/* <div className="mt-4">
+        <AdBanner />
+      </div> */}
     </main>
-    
   );
 }
