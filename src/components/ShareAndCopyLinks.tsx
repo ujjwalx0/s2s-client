@@ -11,7 +11,7 @@ const ShareAndCopyLinks = ({ slug }: { slug: string }) => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const baseUrl = window.location.origin;
-      setFullUrl(`${baseUrl}/blog/${slug}`);
+      setFullUrl(`${baseUrl}/stories/${slug}`);
     }
   }, [slug]);
 

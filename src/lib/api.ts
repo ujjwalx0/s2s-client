@@ -235,7 +235,7 @@ function formatPost(post: any): BlogPost {
       metaTitle: seo?.metaTitle || attrs?.title || '',
       metaDescription: seo?.metaDescription || attrs?.excerpt || '',
       metaKeywords: seo?.metaKeywords || '',
-      canonicalURL: seo?.canonicalURL || `${process.env.BASE_URL}/blog/${slug}`,
+      canonicalURL: seo?.canonicalURL || `${process.env.BASE_URL}/stories/${slug}`,
       structuredData: seo?.structuredData || null,
     },
     localizations: attrs?.localizations?.data || post?.localizations || [],

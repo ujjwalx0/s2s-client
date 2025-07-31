@@ -49,7 +49,7 @@ const Search = () => {
           {results.map((post) => (
             <div key={post.id} className="border-b py-2">
               <h3 className="text-lg font-semibold text-blue-600">
-                <a href={`/blog/${post.slug}`}>{post.title}</a>
+                <a href={`/stories/${post.slug}`}>{post.title}</a>
               </h3>
               <p>{post.excerpt}</p>
             </div>

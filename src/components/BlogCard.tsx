@@ -41,7 +41,7 @@ const BlogCard: FC<{ post: BlogPost }> = ({ post }) => {
 
   return (
     <Link
-      href={`/blog/${post.slug}`}
+      href={`/stories/${post.slug}`}
       className="w-full flex flex-col overflow-hidden rounded-md border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 p-2 transition-all duration-200
                  h-[350px]" // fixed height for all cards
     >

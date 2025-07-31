@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
       openGraph: {
         title: 'Post Not Found',
         description: 'The requested blog post could not be found.',
-        url: `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slug}`,
+        url: `${process.env.NEXT_PUBLIC_SITE_URL}/stories/${slug}`,
       },
       twitter: {
         card: 'summary',
@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
           alt: post.title,
         },
       ],
-      url: `${process.env.NEXT_PUBLIC_SITE_URL}/blog/${slug}`,
+      url: `${process.env.NEXT_PUBLIC_SITE_URL}/stories/${slug}`,
       type: 'article',
     },
     twitter: {
